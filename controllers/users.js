@@ -16,11 +16,12 @@ module.exports.getAllUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params._id)
-    .orFail()
     .then((user) => res.send({ data: user }))
     // eslint-disable-next-line consistent-return
     .catch((err) => {
-      if (err.name === NotFoundError.name) {
+      if (err.name === ValidationError.name) {
+        res.status(400).send({ message: 'Передан некорректный id пользователя.' });
+      } else if (err.name === NotFoundError.name) {
         res.status(404).send({ message: 'Пользователь по указанному id не найден.' });
       } else if (err.name === DefaultError.name) {
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
