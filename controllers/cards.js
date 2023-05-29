@@ -41,8 +41,7 @@ module.exports.deleteCard = (req, res) => {
       res.send({ data: card });
     })
     // eslint-disable-next-line consistent-return
-    .catch((err) => {
-      console.log(err)
+    .catch(() => {
       res.status(404).send({ message: 'Карточка с указанным id не найдена.' });
     });
 };
