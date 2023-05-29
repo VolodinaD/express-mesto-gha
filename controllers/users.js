@@ -49,10 +49,10 @@ module.exports.createUser = (req, res) => {
 
 module.exports.updateUserProfile = (req, res) => {
   // eslint-disable-next-line max-len
-  User.findByIdAndUpdate(req.user._id, { name: req.name, about: req.about }, { new: true })
+  User.findByIdAndUpdate(req.user._id, { name: req.body.name, about: req.body.about }, { new: true })
     .then((user) => {
-      if (req.name.length >= 2 && req.name.length <= 30
-        && req.about.length >= 2 && (req.about.length <= 30)) {
+      if (req.body.name.length >= 2 && req.body.name.length <= 30
+        && req.body.about.length >= 2 && (req.body.about.length <= 30)) {
         res.send({ data: user });
       }
       res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
@@ -68,7 +68,7 @@ module.exports.updateUserProfile = (req, res) => {
 };
 
 module.exports.updateUserAvatar = (req, res) => {
-  User.findByIdAndUpdate(req.user._id, { avatar: req.avatar }, { new: true })
+  User.findByIdAndUpdate(req.user._id, { avatar: req.body.avatar }, { new: true })
     .then((user) => res.send({ data: user }))
     // eslint-disable-next-line consistent-return
     .catch((err) => {
