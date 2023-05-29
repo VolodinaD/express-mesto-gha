@@ -24,12 +24,10 @@ module.exports.getUserById = (req, res) => {
     })
     // eslint-disable-next-line consistent-return
     .catch((err) => {
-      if (err.name === ValidationError.name) {
-        res.status(400).send({ message: 'Передан некорректный id пользователя.' });
-      } else if (err.name === DefaultError.name) {
+      if (err.name === DefaultError.name) {
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
       } else {
-        res.status(500).send({ message: 'Ошибка по умолчанию.' });
+        res.status(400).send({ message: 'Передан некорректный id пользователя.' });
       }
     });
 };

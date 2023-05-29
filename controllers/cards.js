@@ -1,6 +1,5 @@
 const Card = require('../models/card');
 const ValidationError = require('../errors/ValidationError');
-const NotFoundError = require('../errors/NotFoundError');
 const DefaultError = require('../errors/DefaultError');
 
 module.exports.getAllCards = (req, res) => {
@@ -35,11 +34,16 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params._id)
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (card === null) {
+        res.status(404).send({ message: 'Карточка с указанным id не найдена.' });
+      }
+      res.send({ data: card });
+    })
     // eslint-disable-next-line consistent-return
     .catch((err) => {
-      if (err.name === NotFoundError.name) {
-        res.status(404).send({ message: 'Карточка с указанным id не найдена.' });
+      if (err.name === DefaultError.name) {
+        res.status(500).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
@@ -54,12 +58,10 @@ module.exports.likeCard = (req, res) => {
     })
     // eslint-disable-next-line consistent-return
     .catch((err) => {
-      if (err.name === ValidationError.name) {
-        res.status(400).send({ message: 'Переданы некорректные данные для постановки лайка.' });
-      } else if (err.name === DefaultError.name) {
+      if (err.name === DefaultError.name) {
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
       } else {
-        res.status(500).send({ message: 'Ошибка по умолчанию.' });
+        res.status(400).send({ message: 'Переданы некорректные данные для постановки лайка.' });
       }
     });
 };
@@ -74,12 +76,10 @@ module.exports.dislikeCard = (req, res) => {
     })
     // eslint-disable-next-line consistent-return
     .catch((err) => {
-      if (err.name === ValidationError.name) {
-        res.status(400).send({ message: 'Переданы некорректные данные для снятия лайка.' });
-      } else if (err.name === DefaultError.name) {
+      if (err.name === DefaultError.name) {
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
       } else {
-        res.status(500).send({ message: 'Ошибка по умолчанию.' });
+        res.status(400).send({ message: 'Переданы некорректные данные для снятия лайка.' });
       }
     });
 };
