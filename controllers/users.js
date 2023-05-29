@@ -48,8 +48,14 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.updateUserProfile = (req, res) => {
-  User.findByIdAndUpdate(req.user._id, { name: 'Дарья', about: 'Обо мне' }, { new: true })
-    .then((user) => res.send({ data: user }))
+  User.findByIdAndUpdate(req.user._id, { name: 'Даша', about: 'Обо мне' }, { new: true })
+    .then((user) => {
+      if (req.user.name.length >= 2 && req.user.name.length <= 30
+        && req.user.about.length >= 2 && req.user.about.length <= 30) {
+        res.send({ data: user });
+      }
+      res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
+    })
     // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === ValidationError.name) {
@@ -63,7 +69,7 @@ module.exports.updateUserProfile = (req, res) => {
 };
 
 module.exports.updateUserAvatar = (req, res) => {
-  User.findByIdAndUpdate(req.user._id, { avatar: 'https://avatars.mds.yandex.net/i?id=3725789a1a4a6355cd0630f3a9ebd85e8a14bbc1-8249078-images-thumbs&n=13' }, { new: true })
+  User.findByIdAndUpdate(req.user._id, { avatar: 'https://cs10.pikabu.ru/post_img/big/2019/10/03/4/157008105713374400.jpg' }, { new: true })
     .then((user) => res.send({ data: user }))
     // eslint-disable-next-line consistent-return
     .catch((err) => {

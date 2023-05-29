@@ -42,7 +42,7 @@ module.exports.deleteCard = (req, res) => {
     })
     // eslint-disable-next-line consistent-return
     .catch(() => {
-      res.status(404).send({ message: 'Карточка с указанным id не найдена.' });
+      res.status(400).send({ message: 'Передан некорректный id карточки' });
     });
 };
 
