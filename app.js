@@ -26,6 +26,9 @@ app.use((req, res, next) => {
 });
 app.use(userRouter);
 app.use(cardRouter);
+app.get('*', (req, res) => {
+  res.status(404).send({ message: 'Страница не найдена.' });
+});
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

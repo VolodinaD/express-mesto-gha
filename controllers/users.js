@@ -48,7 +48,7 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.updateUserProfile = (req, res) => {
-  User.findByIdAndUpdate(req.user._id, { name: 'Даша', about: 'Обо мне' }, { new: true })
+  User.findByIdAndUpdate(req.user._id, { name: 'Обновленное имя', about: 'Обновленная информация о себе' }, { new: true })
     .then((user) => {
       if (req.user.name.length >= 2 && req.user.name.length <= 30
         && req.user.about.length >= 2 && (req.user.about.length <= 30)) {
@@ -67,7 +67,7 @@ module.exports.updateUserProfile = (req, res) => {
 };
 
 module.exports.updateUserAvatar = (req, res) => {
-  User.findByIdAndUpdate(req.user._id, { avatar: 'https://cs10.pikabu.ru/post_img/big/2019/10/03/4/157008105713374400.jpg' }, { new: true })
+  User.findByIdAndUpdate(req.user._id, { avatar: 'https://krasivosti.pro/uploads/posts/2021-04/thumbs/1619137843_36-krasivosti_pro-p-obichnie-medvedi-medvedi-krasivo-foto-38.jpg' }, { new: true })
     .then((user) => res.send({ data: user }))
     // eslint-disable-next-line consistent-return
     .catch((err) => {
