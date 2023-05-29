@@ -52,7 +52,7 @@ module.exports.updateUserProfile = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name: req.body.name, about: req.body.about }, { new: true })
     .then((user) => {
       if (req.body.name.length >= 2 && req.body.name.length <= 30
-        && req.body.about.length >= 2 && (req.body.about.length <= 30)) {
+        && req.body.about.length >= 2 && req.body.about.length <= 30) {
         res.send({ data: user });
       }
       res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
