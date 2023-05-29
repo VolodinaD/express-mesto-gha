@@ -51,18 +51,16 @@ module.exports.updateUserProfile = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name: 'Даша', about: 'Обо мне' }, { new: true })
     .then((user) => {
       if (req.user.name.length >= 2 && req.user.name.length <= 30
-        && req.user.about.length >= 2 && req.user.about.length <= 30) {
+        && req.user.about.length >= 2 && (req.user.about.length <= 30)) {
         res.send({ data: user });
       }
       res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
     })
     // eslint-disable-next-line consistent-return
     .catch((err) => {
-      if (err.name === ValidationError.name) {
-        res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
-      } else if (err.name === NotFoundError.name) {
+      if (err.name === NotFoundError.name) {
         res.status(404).send({ message: 'Пользователь с указанным id не найден.' });
-      } else if (err.name === DefaultError.name) {
+      } else {
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
       }
     });
