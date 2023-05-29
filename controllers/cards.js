@@ -66,14 +66,19 @@ module.exports.likeCard = (req, res) => {
 
 module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (card === null) {
+        res.status(404).send({ message: 'Передан несуществующий id карточки.' });
+      }
+      res.send({ data: card });
+    })
     // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === ValidationError.name) {
         res.status(400).send({ message: 'Переданы некорректные данные для снятия лайка.' });
-      } else if (err.name === NotFoundError.name) {
-        res.status(404).send({ message: 'Передан несуществующий id карточки.' });
       } else if (err.name === DefaultError.name) {
+        res.status(500).send({ message: 'Ошибка по умолчанию.' });
+      } else {
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
       }
     });
