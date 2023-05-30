@@ -4,7 +4,7 @@ module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch(() => {
-      res.status(500).send({ message: 'Ошибка по умолчанию.' });
+      return res.status(500).send({ message: 'Ошибка по умолчанию.' });
     });
 };
 
@@ -18,11 +18,11 @@ module.exports.getUserById = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Передан некорректный id пользователя.' });
+        return res.status(400).send({ message: 'Передан некорректный id пользователя.' });
       } else if (err.name === 'NotFoundError') {
-        res.status(404).send({ message: 'Пользователь с указанным id не найден.' });
+        return res.status(404).send({ message: 'Пользователь с указанным id не найден.' });
       } else {
-        res.status(500).send({ message: 'Ошибка по умолчанию.' });
+        return res.status(500).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
@@ -31,12 +31,14 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => {
+      return res.status(201).send({ data: user })
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+        return res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
       } else {
-        res.status(500).send({ message: 'Ошибка по умолчанию.' });
+        return res.status(500).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
@@ -54,11 +56,11 @@ module.exports.updateUserProfile = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+        return res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
       } else if (err.name === 'NotFoundError') {
-        res.status(404).send({ message: 'Пользователь с указанным id не найден.' });
+        return res.status(404).send({ message: 'Пользователь с указанным id не найден.' });
       } else {
-        res.status(500).send({ message: 'Ошибка по умолчанию.' });
+        return res.status(500).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
@@ -76,11 +78,11 @@ module.exports.updateUserAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при обновлении аватара.' });
+        return res.status(400).send({ message: 'Переданы некорректные данные при обновлении аватара.' });
       } else if (err.name === 'NotFoundError') {
-        res.status(404).send({ message: 'Пользователь с указанным id не найден.' });
+        return res.status(404).send({ message: 'Пользователь с указанным id не найден.' });
       } else {
-        res.status(500).send({ message: 'Ошибка по умолчанию.' });
+        return res.status(500).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
