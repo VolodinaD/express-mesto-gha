@@ -5,7 +5,6 @@ const DefaultError = require('../errors/DefaultError');
 module.exports.getAllCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === DefaultError.name) {
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
@@ -18,11 +17,8 @@ module.exports.createCard = (req, res) => {
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => {
-      res.send({ data: card });
-      // eslint-disable-next-line no-console
-      console.log(req.user._id);
+      res.status(201).send({ data: card });
     })
-    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === ValidationError.name) {
         res.status(400).send({ message: 'Переданы некорректные данные при создании карточки.' });
@@ -40,9 +36,11 @@ module.exports.deleteCard = (req, res) => {
       }
       res.send({ data: card });
     })
-    // eslint-disable-next-line consistent-return
-    .catch(() => {
-      res.status(400).send({ message: 'Передан некорректный id карточки' });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Передан некорректный id карточки' });
+        return;
+      }
     });
 };
 
@@ -54,7 +52,6 @@ module.exports.likeCard = (req, res) => {
       }
       res.send({ data: card });
     })
-    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === DefaultError.name) {
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
@@ -72,7 +69,6 @@ module.exports.dislikeCard = (req, res) => {
       }
       res.send({ data: card });
     })
-    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === DefaultError.name) {
         res.status(500).send({ message: 'Ошибка по умолчанию.' });

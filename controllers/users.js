@@ -6,7 +6,6 @@ const DefaultError = require('../errors/DefaultError');
 module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === DefaultError.name) {
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
@@ -22,12 +21,11 @@ module.exports.getUserById = (req, res) => {
       }
       res.send({ data: user });
     })
-    // eslint-disable-next-line consistent-return
     .catch((err) => {
-      if (err.name === DefaultError.name) {
-        res.status(500).send({ message: 'Ошибка по умолчанию.' });
-      } else {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Передан некорректный id пользователя.' });
+      } else {
+        res.status(500).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
@@ -36,8 +34,7 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
-    // eslint-disable-next-line consistent-return
+    .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === ValidationError.name) {
         res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
@@ -48,29 +45,38 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.updateUserProfile = (req, res) => {
-  // eslint-disable-next-line max-len
-  User.findByIdAndUpdate(req.user._id, { name: req.body.name, about: req.body.about }, { new: true })
+  User.findByIdAndUpdate(req.user._id, {
+    name: req.body.name, about: req.body.about,
+  }, { new: true, runValidators: true })
     .then((user) => {
-      if (user.name.length >= 2 && user.name.length <= 30
-        && user.about.length >= 2 && user.about.length <= 30) {
-        res.send({ data: user });
-      }
-      res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
+      if (!user) {
+        throw new NotFoundError('Пользователь с указанным id не найден.');
+      };
+      res.send({ data: user });
+      return;
     })
-    // eslint-disable-next-line consistent-return
     .catch((err) => {
-      if (err.name === NotFoundError.name) {
+      if (err.name === ValidationError.name) {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+      } else if (err.name === NotFoundError.name) {
         res.status(404).send({ message: 'Пользователь с указанным id не найден.' });
-      } else {
+      } else if (err.name === DefaultError.name) {
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
       }
     });
 };
 
 module.exports.updateUserAvatar = (req, res) => {
-  User.findByIdAndUpdate(req.user._id, { avatar: req.body.avatar }, { new: true })
-    .then((user) => res.send({ data: user }))
-    // eslint-disable-next-line consistent-return
+  User.findByIdAndUpdate(req.user._id, { avatar: req.body.avatar }, {
+    new: true, runValidators: true,
+  })
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь с указанным id не найден.');
+      };
+      res.send({ data: user });
+      return;
+    })
     .catch((err) => {
       if (err.name === ValidationError.name) {
         res.status(400).send({ message: 'Переданы некорректные данные при обновлении аватара.' });
