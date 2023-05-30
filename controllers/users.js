@@ -12,9 +12,9 @@ module.exports.getUserById = (req, res) => {
   User.findById(req.params._id)
     .then((user) => {
       if (user === null) {
-        throw new NotFoundError('Пользователь с указанным id не найден.');
-      };
-      res.send({ data: user });
+        res.status(404).send({ message: 'Пользователь по указанному id не найден.' });
+      }
+      return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -32,7 +32,7 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => {
-      return res.status(201).send({ data: user })
+      return res.status(201).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -73,8 +73,7 @@ module.exports.updateUserAvatar = (req, res) => {
       if (user === null) {
         throw new NotFoundError('Пользователь с указанным id не найден.');
       };
-      res.send({ data: user });
-      return;
+      return res.status(200).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
