@@ -19,7 +19,7 @@ module.exports.getUserById = (req, res) => {
       if (user === null) {
         res.status(404).send({ message: 'Пользователь по указанному id не найден.' });
       }
-      res.send({ data: user });
+      return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -34,7 +34,9 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => {
+      return res.status(201).send({ data: user });
+    })
     .catch((err) => {
       if (err.name === ValidationError.name) {
         res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
@@ -74,8 +76,7 @@ module.exports.updateUserAvatar = (req, res) => {
       if (!user) {
         throw new NotFoundError('Пользователь с указанным id не найден.');
       };
-      res.send({ data: user });
-      return;
+      return res.status(200).send({ data: user });
     })
     .catch((err) => {
       if (err.name === ValidationError.name) {

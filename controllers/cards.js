@@ -17,7 +17,7 @@ module.exports.createCard = (req, res) => {
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => {
-      res.status(201).send({ data: card });
+      return res.status(201).send({ data: card });
     })
     .catch((err) => {
       if (err.name === ValidationError.name) {
@@ -34,7 +34,7 @@ module.exports.deleteCard = (req, res) => {
       if (card === null) {
         res.status(404).send({ message: 'Карточка с указанным id не найдена.' });
       }
-      res.send({ data: card });
+      return res.status(200).send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -50,7 +50,7 @@ module.exports.likeCard = (req, res) => {
       if (card === null) {
         res.status(404).send({ message: 'Передан несуществующий id карточки.' });
       }
-      res.send({ data: card });
+      return res.status(200).send({ data: card });
     })
     .catch((err) => {
       if (err.name === DefaultError.name) {
@@ -67,7 +67,7 @@ module.exports.dislikeCard = (req, res) => {
       if (card === null) {
         res.status(404).send({ message: 'Передан несуществующий id карточки.' });
       }
-      res.send({ data: card });
+      return res.status(200).send({ data: card });
     })
     .catch((err) => {
       if (err.name === DefaultError.name) {
