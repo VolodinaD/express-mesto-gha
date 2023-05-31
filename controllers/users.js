@@ -1,15 +1,12 @@
 const User = require('../models/user');
 const ValidationError = require('../errors/ValidationError');
 const NotFoundError = require('../errors/NotFoundError');
-const DefaultError = require('../errors/DefaultError');
 
 module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) => {
-      if (err.name === DefaultError.name) {
-        res.status(500).send({ message: 'Ошибка по умолчанию.' });
-      }
+    .catch(() => {
+      res.status(500).send({ message: 'Ошибка по умолчанию.' });
     });
 };
 
@@ -40,7 +37,7 @@ module.exports.createUser = (req, res) => {
     .catch((err) => {
       if (err.name === ValidationError.name) {
         res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
-      } else if (err.name === DefaultError.name) {
+      } else {
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
       }
     });
@@ -62,7 +59,7 @@ module.exports.updateUserProfile = (req, res) => {
         res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
       } else if (err.name === NotFoundError.name) {
         res.status(404).send({ message: 'Пользователь с указанным id не найден.' });
-      } else if (err.name === DefaultError.name) {
+      } else {
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
       }
     });
@@ -83,7 +80,7 @@ module.exports.updateUserAvatar = (req, res) => {
         res.status(400).send({ message: 'Переданы некорректные данные при обновлении аватара.' });
       } else if (err.name === NotFoundError.name) {
         res.status(404).send({ message: 'Пользователь с указанным id не найден.' });
-      } else if (err.name === DefaultError.name) {
+      } else {
         res.status(500).send({ message: 'Ошибка по умолчанию.' });
       }
     });
