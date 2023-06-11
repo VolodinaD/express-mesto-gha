@@ -5,7 +5,9 @@ const jwt = require('jsonwebtoken');
 
 module.exports.getAllUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((users) => {
+      return res.send({ data: users })
+    })
     .catch(next);
 };
 
@@ -20,21 +22,23 @@ module.exports.getUserById = (req, res) => {
     .catch(next);
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = async (req, res) => {
   const { name, about, avatar, email, password } = req.body;
 
-  bcrypt.hash(req.body.password, 10)
-    .then((hash) => User.create({
+  try {
+    a = await bcrypt.hash(req.body.password, 10)
+    b = await User.create({
       name,
       about,
       avatar,
       email,
-      password: hash
-    }))
-    .then((user) => {
-      return res.status(201).send({ data: user });
+      password: a
     })
-    .catch(next);
+  }
+  catch(err) {
+    next(err);
+  }
+  return res.status(200).send({ data: b });
 };
 
 module.exports.updateUserProfile = (req, res) => {
