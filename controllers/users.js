@@ -67,7 +67,7 @@ module.exports.updateUserAvatar = (req, res) => {
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
 
-  return User.findUserByCredentials(email, password)
+  User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь с указанным id не найден.');
