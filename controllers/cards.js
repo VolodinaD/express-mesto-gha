@@ -18,14 +18,12 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params._id)
+  Card.findByIdAndRemove(req.user._id)
     .then((card) => {
-      if (card.owner === req.user._id) {
-        if (card === null) {
+      if (card === null) {
           throw new NotFoundError('Карточка с указанным id не найдена.');
         }
         return res.status(200).send({ data: card });
-      }
     })
     .catch(next);
 };
