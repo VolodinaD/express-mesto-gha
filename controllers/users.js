@@ -73,15 +73,11 @@ module.exports.login = (req, res) => {
 
   User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь с указанным id не найден.');
-      } else {
-        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d'});
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d'});
 
-        res.send({ token });
+      res.send({ token });
 
-        return res.status(200).send({ data: user });
-      }
+      return res.status(200).send({ data: user });
     })
     .catch(next);
 };
