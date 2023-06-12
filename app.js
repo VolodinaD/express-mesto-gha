@@ -42,7 +42,7 @@ app.use('*', (req, res) => {
 });
 app.use(errors());
 app.use((err, req, res, next) => {
-  if (err.name === 'CastError' || ValidationError.name) {
+  if (err.name === 'CastError' || err.name === ValidationError.name) {
     res.status(400).send({ message: 'Переданы некорректные данные.' });
   } else if (err.name === NotFoundError.name) {
     res.status(404).send({ message: err.message });

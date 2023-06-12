@@ -22,23 +22,23 @@ module.exports.getUserById = (req, res) => {
     .catch(next);
 };
 
-module.exports.createUser = async (req, res) => {
+module.exports.createUser = async (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
 
   try {
-    a = await bcrypt.hash(req.body.password, 10)
-    b = await User.create({
+    hashedPass = await bcrypt.hash(req.body.password, 10)
+    user = await User.create({
       name,
       about,
       avatar,
       email,
-      password: a
+      password: hashedPass
     })
+    return res.status(200).send({ data: user });
   }
   catch(err) {
     next(err);
   }
-  return res.status(200).send({ data: b });
 };
 
 module.exports.updateUserProfile = (req, res) => {
