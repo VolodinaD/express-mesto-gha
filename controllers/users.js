@@ -26,14 +26,14 @@ module.exports.createUser = async (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
 
   try {
-    hashedPass = await bcrypt.hash(req.body.password, 10)
+    hashedPass = await bcrypt.hash(req.body.password, 10);
     user = await User.create({
       name,
       about,
       avatar,
       email,
       password: hashedPass
-    })
+    });
     return res.status(200).send({ data: user });
   }
   catch(err) {
@@ -68,16 +68,19 @@ module.exports.updateUserAvatar = (req, res) => {
     .catch(next);
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = async (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d'});
+  try {
+    user = await User.findUserByCredentials(email, password);
 
-      return res.status(200).send({ data: user }, { token });
-    })
-    .catch(next);
+    const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+
+    return res.status(200).send({ data: user, token });
+  }
+  catch(err) {
+    next(err);
+  }
 };
 
 module.exports.getCurrentUser = (req, res) => {
