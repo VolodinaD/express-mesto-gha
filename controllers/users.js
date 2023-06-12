@@ -3,7 +3,7 @@ const NotFoundError = require('../errors/NotFoundError');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-module.exports.getAllUsers = (req, res) => {
+module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       return res.send({ data: users })
@@ -11,7 +11,7 @@ module.exports.getAllUsers = (req, res) => {
     .catch(next);
 };
 
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) => {
   User.findById(req.params._id)
     .then((user) => {
       if (user === null) {
@@ -41,7 +41,7 @@ module.exports.createUser = async (req, res, next) => {
   }
 };
 
-module.exports.updateUserProfile = (req, res) => {
+module.exports.updateUserProfile = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, {
     name: req.body.name, about: req.body.about,
   }, { new: true, runValidators: true })
@@ -55,7 +55,7 @@ module.exports.updateUserProfile = (req, res) => {
     .catch(next);
 };
 
-module.exports.updateUserAvatar = (req, res) => {
+module.exports.updateUserAvatar = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { avatar: req.body.avatar }, {
     new: true, runValidators: true,
   })
@@ -76,20 +76,20 @@ module.exports.login = async (req, res, next) => {
 
     const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
 
-    return res.status(200).send({ data: user, token });
+    return res.status(200).cookie('jwt', token, {
+      maxAge: 3600000,
+      httpOnly: true
+    }).send({ data: user, token });
   }
   catch(err) {
     next(err);
   }
 };
 
-module.exports.getCurrentUser = (req, res) => {
+module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
-      if (user === null) {
-        throw new NotFoundError('Пользователь с указанным id не найден.');
-      }
-      return res.send({ data: user });
+      return res.status(200).send({ data: user });
     })
     .catch(next);
 };

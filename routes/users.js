@@ -5,8 +5,8 @@ const {
 const { celebrate, Joi } = require('celebrate');
 
 userRouter.get('/users', getAllUsers);
-userRouter.get('/users/:_id', getUserById);
 userRouter.get('/users/me', getCurrentUser);
+userRouter.get('/users/:_id', getUserById);
 userRouter.patch('/users/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),

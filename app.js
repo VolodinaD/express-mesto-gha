@@ -9,6 +9,7 @@ const NotFoundError = require('./errors/NotFoundError');
 const AutoriztionError = require('./errors/AutoriztionError');
 const { celebrate, Joi, errors } = require('celebrate');
 const auth = require('./middlewares/auth');
+const cookieParser = require('cookie-parser');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -20,6 +21,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
@@ -43,6 +45,7 @@ app.use('*', (req, res) => {
 });
 app.use(errors());
 app.use((err, req, res, next) => {
+  console.log(err)
   if (err.name === 'CastError' || err.name === ValidationError.name) {
     res.status(400).send({ message: 'Переданы некорректные данные.' });
   } else if (err.name === AutoriztionError.name) {
