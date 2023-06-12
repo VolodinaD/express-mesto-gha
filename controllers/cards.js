@@ -20,10 +20,7 @@ module.exports.createCard = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.user._id)
     .then((card) => {
-      if (card === null) {
-          throw new NotFoundError('Карточка с указанным id не найдена.');
-        }
-        return res.status(200).send({ data: card });
+      return res.status(200).send({ data: card });
     })
     .catch(next);
 };
