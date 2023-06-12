@@ -28,13 +28,13 @@ app.post('/signup', celebrate({
     password: Joi.string().required().min(8),
   }),
 }), createUser);
-app.use(auth);
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
 }), login);
+app.use(auth);
 app.use(userRouter);
 app.use(cardRouter);
 app.use('*', (req, res) => {
