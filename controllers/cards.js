@@ -23,11 +23,10 @@ module.exports.deleteCard = (req, res, next) => {
     .then((card) => {
       if (card === null) {
         throw new NotFoundError('Передан несуществующий id карточки.');
-      } else if (card.owner === req.user._id) {
-        return res.status(200).send({ data: card });
-      } else {
+      } else if (card.owner != req.user._id) {
         throw new DeleteCardError('Нельзя удалить карточку другого пользователя.');
       }
+      return res.status(200).send({ data: card });
     })
     .catch(next);
 };
