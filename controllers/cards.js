@@ -1,5 +1,6 @@
 const Card = require('../models/card');
 const NotFoundError = require('../errors/NotFoundError');
+const DeleteCardError = require('../errors/DeleteCardError');
 
 module.exports.getAllCards = (req, res, next) => {
   Card.find({})
@@ -18,9 +19,15 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.user._id)
+  Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
-      return res.status(200).send({ data: card });
+      if (card === null) {
+        throw new NotFoundError('Передан несуществующий id карточки.');
+      } else if (card.owner._id === req.user._id) {
+        return res.status(200).send({ data: card });
+      } else {
+        throw new DeleteCardError('Нельзя удалить карточку другого пользователя.');
+      }
     })
     .catch(next);
 };

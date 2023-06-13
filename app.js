@@ -7,6 +7,7 @@ const { login, createUser } = require('./controllers/users.js');
 const ValidationError = require('./errors/ValidationError');
 const NotFoundError = require('./errors/NotFoundError');
 const AutoriztionError = require('./errors/AutoriztionError');
+const DeleteCardError = require('./errors/DeleteCardError');
 const { celebrate, Joi, errors } = require('celebrate');
 const auth = require('./middlewares/auth');
 const cookieParser = require('cookie-parser');
@@ -50,6 +51,8 @@ app.use((err, req, res, next) => {
     res.status(400).send({ message: 'Переданы некорректные данные.' });
   } else if (err.name === AutoriztionError.name) {
     res.status(401).send({ message: err.message });
+  } else if (err.name === DeleteCardError.name) {
+    res.status(403).send({ message: err.message });
   } else if (err.name === NotFoundError.name) {
     res.status(404).send({ message: err.message });
   } else if (err.code === 11000) {
