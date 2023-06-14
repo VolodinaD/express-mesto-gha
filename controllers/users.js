@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      return res.send({ data: users })
+      return res.send({ data: users });
     })
     .catch(next);
 };
@@ -23,20 +23,21 @@ module.exports.getUserById = (req, res, next) => {
 };
 
 module.exports.createUser = async (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
   try {
-    hashedPass = await bcrypt.hash(req.body.password, 10);
-    user = await User.create({
+    const hashedPass = await bcrypt.hash(req.body.password, 10);
+    const user = await User.create({
       name,
       about,
       avatar,
       email,
-      password: hashedPass
+      password: hashedPass,
     });
     return res.status(200).send({ data: user });
-  }
-  catch(err) {
+  } catch (err) {
     next(err);
   }
 };
@@ -48,7 +49,7 @@ module.exports.updateUserProfile = (req, res, next) => {
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь с указанным id не найден.');
-      };
+      }
       res.send({ data: user });
       return;
     })
@@ -62,7 +63,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь с указанным id не найден.');
-      };
+      }
       return res.status(200).send({ data: user });
     })
     .catch(next);
@@ -72,16 +73,15 @@ module.exports.login = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    user = await User.findUserByCredentials(email, password);
+    const user = await User.findUserByCredentials(email, password);
 
     const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
 
     return res.status(200).cookie('jwt', token, {
       maxAge: 3600000,
-      httpOnly: true
-    }).send({ data: user, token });
-  }
-  catch(err) {
+      httpOnly: true,
+    }).send({ data: user });
+  } catch (err) {
     next(err);
   }
 };

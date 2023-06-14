@@ -19,13 +19,14 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (card === null) {
         throw new NotFoundError('Передан несуществующий id карточки.');
-      } else if (card.owner != req.user._id) {
+      } else if (card.owner.toString() !== req.user._id) {
         throw new DeleteCardError('Нельзя удалить карточку другого пользователя.');
       }
+      card.deleteOne();
       return res.status(200).send({ data: card });
     })
     .catch(next);

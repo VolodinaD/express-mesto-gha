@@ -9,21 +9,21 @@ const userSchema = new mongoose.Schema({
     required: false,
     minlength: 2,
     maxlength: 30,
-    default: 'Жак-Ив Кусто'
+    default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
     required: false,
     minlength: 2,
     maxlength: 30,
-    default: 'Исследователь'
+    default: 'Исследователь',
   },
   avatar: {
     type: String,
     required: false,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator: function(v) {
+      validator: (v) => {
         return /^(http|https):\/\/[^ "]+$/.test(v);
       },
       message: 'Некорректная ссылка на изображение',
@@ -36,13 +36,12 @@ const userSchema = new mongoose.Schema({
     validate: {
       validator: (v) => validator.isEmail(v),
       message: 'Некорректный Email',
-    }
+    },
   },
   password: {
     type: String,
     required: true,
-    minlength: 8,
-    select: false
+    select: false,
   },
 }, { toJSON: { useProjection: true }, toObject: { useProjection: true } });
 

@@ -29,24 +29,23 @@ app.post('/signup', celebrate({
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().pattern(new RegExp(/^(http|https):\/\/[^ "]+$/)),
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
+    password: Joi.string().required(),
   }),
 }), createUser);
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
+    password: Joi.string().required(),
   }),
 }), login);
 app.use(auth);
 app.use(userRouter);
 app.use(cardRouter);
-app.use('*', (req, res) => {
-  res.status(404).send({ message: 'Страница не найдена.' });
+app.use('*', (req, res, next) => {
+  return next(new NotFoundError('Страница не найдена.'));
 });
 app.use(errors());
 app.use((err, req, res, next) => {
-  console.log(err)
   if (err.name === 'CastError' || err.name === ValidationError.name) {
     res.status(400).send({ message: 'Переданы некорректные данные.' });
   } else if (err.name === AutoriztionError.name) {
