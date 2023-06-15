@@ -3,16 +3,6 @@
   "rules": {
     "no-underscore-dangle": ["error", {
       "allow": ["_id"]
-    }],
-
-    "no-useless-return": "off",
-    "consistent-return": "off",
-    "prefer-regex-literals": "off",
-    "import/extensions": "off",
-    "import/order": "off",
-    "arrow-body-style": "off",
-    "no-unused-vars": "off",
-    "no-console": "off",
-    "func-names": "off"
+    }]
   }
 }

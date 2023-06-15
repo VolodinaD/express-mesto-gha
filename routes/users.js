@@ -1,8 +1,8 @@
 const userRouter = require('express').Router();
+const { celebrate, Joi } = require('celebrate');
 const {
   getAllUsers, getUserById, updateUserProfile, updateUserAvatar, getCurrentUser,
 } = require('../controllers/users');
-const { celebrate, Joi } = require('celebrate');
 
 userRouter.get('/users', getAllUsers);
 userRouter.get('/users/me', getCurrentUser);
@@ -19,7 +19,7 @@ userRouter.patch('/users/me', celebrate({
 }), updateUserProfile);
 userRouter.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().pattern(new RegExp(/^(http|https):\/\/[^ "]+$/)),
+    avatar: Joi.string().required().pattern(/^(http|https):\/\/[^ "]+$/),
   }),
 }), updateUserAvatar);
 

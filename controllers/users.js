@@ -1,13 +1,11 @@
-const User = require('../models/user');
-const NotFoundError = require('../errors/NotFoundError');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+const NotFoundError = require('../errors/NotFoundError');
 
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
-    .then((users) => {
-      return res.send({ data: users });
-    })
+    .then((users) => res.send({ data: users }))
     .catch(next);
 };
 
@@ -28,7 +26,7 @@ module.exports.createUser = async (req, res, next) => {
   } = req.body;
 
   try {
-    const hashedPass = await bcrypt.hash(req.body.password, 10);
+    const hashedPass = await bcrypt.hash(password, 10);
     const user = await User.create({
       name,
       about,
@@ -38,7 +36,7 @@ module.exports.createUser = async (req, res, next) => {
     });
     return res.status(200).send({ data: user });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
 
@@ -50,8 +48,7 @@ module.exports.updateUserProfile = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь с указанным id не найден.');
       }
-      res.send({ data: user });
-      return;
+      return res.send({ data: user });
     })
     .catch(next);
 };
@@ -82,14 +79,12 @@ module.exports.login = async (req, res, next) => {
       httpOnly: true,
     }).send({ data: user });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) => {
-      return res.status(200).send({ data: user });
-    })
+    .then((user) => res.status(200).send({ data: user }))
     .catch(next);
 };

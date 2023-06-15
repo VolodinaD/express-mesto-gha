@@ -12,9 +12,7 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => {
-      return res.status(201).send({ data: card });
-    })
+    .then((card) => res.status(201).send({ data: card }))
     .catch(next);
 };
 
@@ -27,8 +25,8 @@ module.exports.deleteCard = (req, res, next) => {
         throw new DeleteCardError('Нельзя удалить карточку другого пользователя.');
       }
       card.deleteOne();
-      return res.status(200).send({ data: card });
     })
+    .then((card) => res.status(200).send({ data: card }))
     .catch(next);
 };
 

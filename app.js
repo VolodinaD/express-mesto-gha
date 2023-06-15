@@ -1,16 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const { celebrate, Joi, errors } = require('celebrate');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
-const { login, createUser } = require('./controllers/users.js');
+const { login, createUser } = require('./controllers/users');
 const ValidationError = require('./errors/ValidationError');
 const NotFoundError = require('./errors/NotFoundError');
 const AutoriztionError = require('./errors/AutoriztionError');
 const DeleteCardError = require('./errors/DeleteCardError');
-const { celebrate, Joi, errors } = require('celebrate');
+
 const auth = require('./middlewares/auth');
-const cookieParser = require('cookie-parser');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -27,7 +28,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(new RegExp(/^(http|https):\/\/[^ "]+$/)),
+    avatar: Joi.string().pattern(/^(http|https):\/\/[^ "]+$/),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
@@ -41,9 +42,7 @@ app.post('/signin', celebrate({
 app.use(auth);
 app.use(userRouter);
 app.use(cardRouter);
-app.use('*', (req, res, next) => {
-  return next(new NotFoundError('Страница не найдена.'));
-});
+app.use('*', (req, res, next) => next(new NotFoundError('Страница не найдена.')));
 app.use(errors());
 app.use((err, req, res, next) => {
   if (err.name === 'CastError' || err.name === ValidationError.name) {
@@ -59,8 +58,7 @@ app.use((err, req, res, next) => {
   } else {
     res.status(500).send({ message: 'Ошибка по умолчанию.' });
   }
+  next();
 });
 
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
-});
+app.listen(PORT);

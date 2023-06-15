@@ -1,14 +1,14 @@
 const cardRouter = require('express').Router();
+const { celebrate, Joi } = require('celebrate');
 const {
   getAllCards, createCard, deleteCard, likeCard, dislikeCard,
 } = require('../controllers/cards');
-const { celebrate, Joi } = require('celebrate');
 
 cardRouter.get('/cards', getAllCards);
 cardRouter.post('/cards', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().pattern(new RegExp(/^(http|https):\/\/[^ "]+$/)),
+    link: Joi.string().required().pattern(/^(http|https):\/\/[^ "]+$/),
   }),
 }), createCard);
 cardRouter.delete('/cards/:cardId', celebrate({
