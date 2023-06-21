@@ -10,6 +10,7 @@ const ValidationError = require('./errors/ValidationError');
 const NotFoundError = require('./errors/NotFoundError');
 const AutoriztionError = require('./errors/AutoriztionError');
 const DeleteCardError = require('./errors/DeleteCardError');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const auth = require('./middlewares/auth');
 
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(requestLogger);
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
@@ -43,6 +45,7 @@ app.use(auth);
 app.use(userRouter);
 app.use(cardRouter);
 app.use('*', (req, res, next) => next(new NotFoundError('Страница не найдена.')));
+app.use(errorLogger);
 app.use(errors());
 app.use((err, req, res, next) => {
   if (err.name === 'CastError' || err.name === ValidationError.name) {

@@ -24,7 +24,7 @@ module.exports.deleteCard = (req, res, next) => {
       } else if (card.owner.toString() !== req.user._id) {
         throw new DeleteCardError('Нельзя удалить карточку другого пользователя.');
       }
-      card.deleteOne();
+      return card.deleteOne();
     })
     .then((card) => res.status(200).send({ data: card }))
     .catch(next);
