@@ -13,7 +13,7 @@ const AutoriztionError = require('./errors/AutoriztionError');
 const DeleteCardError = require('./errors/DeleteCardError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const auth = require('./middlewares/auth');
-const cors = require('./middlewares/cors');
+//const cors = require('./middlewares/cors');
 
 const { PORT = 3000 } = process.env;
 const app = express();
