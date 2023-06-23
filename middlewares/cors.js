@@ -1,6 +1,6 @@
 const allowedCors = [
-    'https://mesto.volodina.students.nomoreparties.sbs',
-    'http://mesto.volodina.students.nomoreparties.sbs',
+    //'https://mesto.volodina.students.nomoreparties.sbs',
+    //'http://mesto.volodina.students.nomoreparties.sbs',
     'https://localhost:3000',
     'http://localhost:3000'
 ];
