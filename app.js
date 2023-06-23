@@ -13,7 +13,7 @@ const AutoriztionError = require('./errors/AutoriztionError');
 const DeleteCardError = require('./errors/DeleteCardError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const auth = require('./middlewares/auth');
-//const cors = require('./middlewares/cors');
+// const cors = require('./middlewares/cors');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -26,13 +26,13 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-//app.use(cors);
+// app.use(cors);
 app.use(requestLogger);
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-}); 
+//app.get('/crash-test', () => {
+  //setTimeout(() => {
+    //throw new Error('Сервер сейчас упадёт');
+  //}, 0);
+//});
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
